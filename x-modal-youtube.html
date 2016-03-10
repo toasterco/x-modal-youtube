@@ -266,7 +266,7 @@ element will get appended to the document's `<body>`.
       _playerReady: function(e) {
         this.async(function() {
           this._loading = false;
-          Polymer.dom(e.target).classList.add('ready');
+          Polymer.dom(this.$.player).classList.add('ready');
         }, 300);
       },
 
