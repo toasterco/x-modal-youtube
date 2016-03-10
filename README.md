@@ -48,6 +48,7 @@ The following custom properties and mixins are available for styling.
 Custom property | Description | Default
 ----------------|-------------|----------
 `--x-modal-youtube-max-video-width` | Max width fot the YouTube video             | `1000px`
+`--x-modal-youtube-spinner-color`   | Color of the spinner                        | `white`
 `--x-modal-youtube-dismiss-button`  | Mixin applied to the dismiss button (cross) | `{}`
 
 
