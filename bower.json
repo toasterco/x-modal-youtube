@@ -5,11 +5,11 @@
   "authors": [
     "Marco Ciampini <marco.ciampo@gmail.com>"
   ],
-  "description": "Polymer element. Use `<x-modal-youtube>` to open any youtube video in a modal dialog just by firing the `x-modal-youtube-open` event.",
+  "description": "Polymer element. Use `<x-modal-youtube>` to open any youtube video in a modal dialog just by firing the `x-modal-youtube-open` iron-signal.",
   "main": "x-modal-youtube.html",
   "repository": {
     "type": "git",
-    "url": "git://github.com/ciampo/swiper-behavior.git"
+    "url": "git://github.com/toasterco/x-modal-youtube"
   },
   "keywords": [
     "web-components",
