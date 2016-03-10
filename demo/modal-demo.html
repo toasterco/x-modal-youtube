@@ -1,0 +1,36 @@
+<link rel="import" href="../../polymer/polymer.html">
+
+<link rel="import" href="../../paper-button/paper-button.html">
+
+<link rel="import" href="../x-modal-youtube.html">
+
+<dom-module id="modal-demo">
+  <template>
+    <style include="paper-dialog-shared-styles"></style>
+
+    <style>
+      :host {
+        display: block;
+
+        position: relative;
+      }
+    </style>
+
+    <paper-button
+        id="open2"
+        on-tap="_openDialog">Toggle by firing <pre>x-modal-youtube-open</pre></paper-button>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'modal-demo',
+
+      _openDialog: function() {
+        this.fire('iron-signal', {
+          name: 'x-modal-youtube-open',
+          data: {youtubeId: 'NRKZh-2j4PY'}
+        });
+      }
+    });
+  </script>

@@ -1,0 +1,302 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../iron-signals/iron-signals.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../paper-spinner/paper-spinner.html">
+<link rel="import" href="../paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../paper-dialog-behavior/paper-dialog-shared-styles.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../google-youtube/google-youtube.html">
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+
+<!--
+Use `<x-modal-youtube>` to open any youtube video in a modal dialog just by
+firing the `x-modal-youtube-open` event.
+
+Use neon animations to change the way the modal appears/disappears. You can
+either use the shorthand `entry-animation` and `exit-animation` properties,
+or specify the detailed configuration object via the `animationConfig` attribute.
+
+Example:
+
+
+
+    <link rel="import" href="components/neon-animation/animations/fade-in-animation.html">
+    <link rel="import" href="components/neon-animation/animations/fade-out-animation.html">
+
+    ...
+
+    <x-modal-youtube
+        entry-animation="fade-in-animation"
+        exit-animation="fade-out-animation"></x-modal-youtube>
+
+
+For best results, add this element directly in the document's `<body>`.
+
+You can open the dialog by firing the `x-modal-youtube-open` event:
+
+    this.fire('iron-signal', {
+      name: 'x-modal-youtube-open',
+      data: {
+        youtubeId: '...'
+      }
+    });
+
+
+Alternatively:
+
+- the `youtubeId` attribute can be used to change the video.
+
+- the `open()`, `close()`, and `toogle()` methods can be used to control the dialog.
+
+
+
+### Styling
+
+The following custom properties and mixins are available for styling.
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--x-modal-youtube-max-video-width` | Max width fot the YouTube video             | `1000px`
+`--x-modal-youtube-dismiss-button`  | Mixin applied to the dismiss button (cross) | `{}`
+
+
+The backdrop element's background color and opacity can be changed via the
+`--iron-overlay-backdrop-background-color` and `--iron-overlay-backdrop-opacity`
+CSS properties. They should be set in the page root, since the `<iron-overlay-backdrop>`
+element will get appended to the document's `<body>`.
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="x-modal-youtube">
+  <template>
+    <style include="paper-dialog-shared-styles"></style>
+
+    <style>
+      :host {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+        @apply(--layout-center);
+
+        position: relative;
+
+        width: 80%;
+        max-width: var(--x-modal-youtube-max-video-width, 1000px);
+
+        margin: 0 auto;
+
+        box-shadow: none;
+
+        background-color: transparent;
+
+        --paper-spinner-layer-1-color: white;
+        --paper-spinner-layer-2-color: white;
+        --paper-spinner-layer-3-color: white;
+        --paper-spinner-layer-4-color: white;
+      }
+
+      iron-signals {
+        display: none;
+      }
+
+      paper-icon-button {
+        display: block;
+
+        position: fixed;
+        top: 10px;
+        right: 10px;
+
+        z-index: 1;
+
+        margin: 0;
+        padding: 8px;
+
+        border: 1px solid white;
+        border-radius: 50%;
+
+        color: white;
+
+        @apply(--x-modal-youtube-dismiss-button);
+      }
+
+      paper-spinner {
+        position: absolute;
+
+        top: 50%;
+        left: 50%;
+
+        -webkit-transform: translateX(-50%) translateY(-50%);
+        transform: translateX(-50%)  translateY(-50%);
+      }
+
+      #player {
+        z-index: 0;
+
+        max-width: 100%;
+        max-height: 100%;
+
+        margin: 0 auto;
+        padding: 0;
+
+        box-sizing: border-box;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+
+        opacity: 0;
+        transition: opacity .3s ease-out;
+      }
+
+      #player.ready {
+        opacity: 1;
+      }
+
+      @media screen and (max-width: 600px) {
+        :host {
+          width: 100%;
+        }
+      }
+    </style>
+
+    <iron-signals
+        on-iron-signal-x-modal-youtube-open="_openDialog"></iron-signals>
+
+    <paper-spinner active="{{_loading}}" alt="Loading YouTube player"></paper-spinner>
+
+    <google-youtube
+        id="player"
+        video-id="{{youtubeId}}"
+        fluid
+        modestbranding="1"
+        rel="0"
+        showinfo="0"
+        iv_load_policy="3"
+        autoplay="1"
+        on-google-youtube-ready="_playerReady"></google-youtube>
+
+    <paper-icon-button
+        icon="close"
+        alt="Dismiss dialog"
+        dialog-dismiss></paper-icon-button>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'x-modal-youtube',
+
+      properties: {
+
+        /** YouTube video ID. Changing its value triggers a new request. */
+        youtubeId: {
+          type: String,
+          value: null
+        },
+
+        backdropBgColor: String,
+
+        backdropOpacity: Number,
+
+        /** True if the YouTube player isn't ready yet. */
+        _loading: {
+          type: Boolean,
+          value: true
+        }
+      },
+
+      behaviors: [
+        Polymer.PaperDialogBehavior,
+        Polymer.NeonAnimationRunnerBehavior
+      ],
+
+      listeners: {
+        'neon-animation-finish': '_onNeonAnimationFinish',
+      },
+
+      observers: [
+        '_dialogToggled(opened)',
+      ],
+
+      ready: function() {
+        // Add the background.
+        this.modal = true;
+      },
+
+      attached: function() {
+        // Allow dismissing the modal by clicking on the bg and pressing ESC.
+        this.noCancelOnOutsideClick = false;
+        this.noCancelOnEscKey = false;
+      },
+
+      /**
+       * Starts ot stops the video playback when the dialog is toggled.
+       *
+       * @param  {Boolean} opened True if the dialog has just been opened.
+       * @private
+       */
+      _dialogToggled: function(opened) {
+        if (!opened) {
+
+          if (this.$.player) {
+            this.$.player.pause();
+          }
+        } else {
+
+          if (this.$.player) {
+            this.$.player.seekTo(0);
+            this.$.player.play();
+          }
+        }
+      },
+
+      /**
+       * Sets the new YouTube videoId and opens the dialog.
+       *
+       * @param  {Event} e The event object.
+       * @private
+       */
+      _openDialog: function(e) {
+        this.youtubeId = e.detail.youtubeId;
+        this.open();
+      },
+
+      /**
+       * Adds the `ready` class to the YouTube player when it fires the `ready`
+       * event.
+       *
+       * @param  {Event} e The event object.
+       * @private
+       */
+      _playerReady: function(e) {
+        this.async(function() {
+          this._loading = false;
+          Polymer.dom(e.target).classList.add('ready');
+        }, 300);
+      },
+
+      // The next methods are taken from `<paper-dialog>`, and are overriding
+      // some private functions defined in `<iron-overlay-behavior>` in order to
+      // enable neon animations.
+      _renderOpened: function() {
+        this.cancelAnimation();
+        if (this.withBackdrop) {
+          this.backdropElement.open();
+        }
+        this.playAnimation('entry');
+      },
+      _renderClosed: function() {
+        this.cancelAnimation();
+        if (this.withBackdrop) {
+          this.backdropElement.close();
+        }
+        this.playAnimation('exit');
+      },
+      _onNeonAnimationFinish: function() {
+        if (this.opened) {
+          this._finishRenderOpened();
+        } else {
+          this._finishRenderClosed();
+        }
+      }
+    });
+  </script>

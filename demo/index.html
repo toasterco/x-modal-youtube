@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <title>x-modal-youtube demo</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="../../neon-animation/animations/fade-in-animation.html">
+  <link rel="import" href="../../neon-animation/animations/fade-out-animation.html">
+
+  <link rel="import" href="modal-demo.html">
+</head>
+<body unresolved>
+
+  <style is="custom-style">
+    :root {
+      --x-modal-youtube-dismiss-button: {
+        background-color: white;
+        color: red;
+        border-color: red;
+
+        position: fixed;
+        right: auto;
+        left: 10px;
+      };
+
+      --iron-overlay-backdrop-background-color: green;
+      --iron-overlay-backdrop-opacity: 0.2;
+    }
+  </style>
+
+
+  <button id="open1">Toggle by setting <pre>youtubeId</pre> and <pre>open()</pre></button>
+
+  <modal-demo></modal-demo>
+
+  <x-modal-youtube
+      id="modal"
+      entry-animation="fade-in-animation"
+      exit-animation="fade-out-animation"></x-modal-youtube>
+
+  <script>
+    window.addEventListener('WebComponentsReady', function(e) {
+      var modal = document.getElementById('modal');
+
+      document.getElementById('open1').addEventListener('click', function() {
+        modal.youtubeId = 'DCpsusTta4w';
+        modal.open();
+      });
+    });
+  </script>
+
+</body>
