@@ -14,7 +14,7 @@
 Use `<x-modal-youtube>` to open any youtube video in a modal dialog just by
 firing the `x-modal-youtube-open` event.
 
-Use neon animations to change the way the modal appears/disappears. You can
+Use neon animations to change the way the dialog appears/disappears. You can
 either use the shorthand `entry-animation` and `exit-animation` properties,
 or specify the detailed configuration object via the `animationConfig` attribute.
 
@@ -192,10 +192,6 @@ element will get appended to the document's `<body>`.
           type: String,
           value: null
         },
-
-        backdropBgColor: String,
-
-        backdropOpacity: Number,
 
         /** True if the YouTube player isn't ready yet. */
         _loading: {
