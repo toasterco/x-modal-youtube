@@ -6,15 +6,16 @@
   <template>
     <style>
       :host {
-        display: block;
+        display: inline-block;
 
         position: relative;
       }
     </style>
 
     <paper-button
+        raised
         id="open2"
-        on-tap="_openDialog">Toggle by firing <pre>x-modal-youtube-open</pre></paper-button>
+        on-tap="_openDialog">Open with iron-signal</paper-button>
 
   </template>
 

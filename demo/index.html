@@ -34,12 +34,20 @@
       --iron-overlay-backdrop-background-color: green;
       --iron-overlay-backdrop-opacity: 0.2;
     }
+
+    .code {
+      font-family: monospace;
+    }
   </style>
 
+  <p>The first <span class="code">&lt;button&gt;</span> opens the dialog by setting the <span class="code">youtubeId</span> and calling <span class="code">open()</span> on the dialog DOM element.</p>
+  <button id="open1">Open</button>
 
-  <button id="open1">Toggle by setting <pre>youtubeId</pre> and <pre>open()</pre></button>
-
+  <p>The second button (a <span class="code">&lt;paper-button&gt;</span>) opens the dialog by firing the <span class="code">x-modal-youtube-open</span> iron-signal. This button is in a separate component and doesn't have any reference to the modal dialog DOM element.</p>
   <modal-demo></modal-demo>
+
+  <p>The close icon color and position is changed by setting the <span class="code">--x-modal-youtube-dismiss-button</span> mixin.</p>
+  <p>The backdrop background color and opacity is changed by setting the <span class="code">--iron-overlay-backdrop-background-color</span> and <span class="code">--iron-overlay-backdrop-opacity</span> properties.</p>
 
   <x-modal-youtube
       id="modal"
