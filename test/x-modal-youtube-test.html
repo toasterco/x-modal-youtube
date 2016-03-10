@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="test-element.html">
+  </head>
+  <body>
+
+    <test-fixture id="test-element-fixture">
+      <template>
+        <test-element></test-element>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('x-modal-youtube', function() {
+
+        var myEl;
+        var testId = 'DCpsusTta4w';
+
+        setup(function() {
+          myEl = fixture('test-element-fixture');
+        });
+
+        test('Video ID correctly set', function() {
+          myEl.$.modal.youtubeId = testId;
+
+          assert.equal(myEl.$.modal.$.player.videoId, testId);
+        });
+
+        test('Open', function() {
+          myEl.$.modal.youtubeId = testId;
+          myEl.$.modal.open();
+
+          assert.equal(myEl.$.modal.opened, true);
+        });
+
+        test('Iron signal', function() {
+          myEl.fireSignal();
+
+          assert.equal(myEl.$.modal.$.player.videoId, myEl.testId);
+          assert.equal(myEl.$.modal.opened, true);
+        });
+
+
+      });
+    </script>
+
+  </body>
+</html>
