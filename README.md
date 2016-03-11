@@ -1,4 +1,4 @@
-## &lt;swiper-behavior&gt;
+## &lt;x-modal-youtube&gt;
 
 **Polymer** element. Use `<x-modal-youtube>` to open any youtube video in a
 modal dialog just by firing the `x-modal-youtube-open` iron-signal.
