@@ -141,11 +141,19 @@ element will get appended to the document's `<body>`.
         box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
 
         opacity: 0;
-        transition: opacity .3s ease-out;
+
+        visibility: hidden;
+
+        transition-property: opacity, visibility;
+        transition-delay: .1s, 0s;
+        transition-duration: .3s, .1s;
+        transition-timing-function: ease-out;
       }
 
       #player.ready {
         opacity: 1;
+
+        visibility: visible;
       }
 
       @media screen and (max-width: 600px) {
