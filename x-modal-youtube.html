@@ -172,6 +172,7 @@ element will get appended to the document's `<body>`.
 
     <google-youtube
         id="player"
+        class$="{{_computePlayerClass(_loading)}}"
         video-id="{{youtubeId}}"
         fluid
         modestbranding="1"
@@ -272,8 +273,16 @@ element will get appended to the document's `<body>`.
       _playerReady: function(e) {
         this.async(function() {
           this._loading = false;
-          Polymer.dom(this.$.player).classList.add('ready');
         }, 300);
+      },
+
+      /**
+       * Changes the player class based on whether the player is ready.
+       *
+       * @private
+       */
+      _computePlayerClass: function(loading) {
+        return loading ? '' : 'ready';
       },
 
       // The next methods are taken from `<paper-dialog>`, and are overriding
@@ -286,6 +295,7 @@ element will get appended to the document's `<body>`.
         }
         this.playAnimation('entry');
       },
+
       _renderClosed: function() {
         this.cancelAnimation();
         if (this.withBackdrop) {
@@ -293,6 +303,7 @@ element will get appended to the document's `<body>`.
         }
         this.playAnimation('exit');
       },
+
       _onNeonAnimationFinish: function() {
         if (this.opened) {
           this._finishRenderOpened();
