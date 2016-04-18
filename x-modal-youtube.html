@@ -180,7 +180,8 @@ element will get appended to the document's `<body>`.
         showinfo="0"
         iv_load_policy="3"
         autoplay="1"
-        on-google-youtube-ready="_playerReady"></google-youtube>
+        on-google-youtube-ready="_playerReady"
+        on-google-youtube-state-change="_playerStateChange"></google-youtube>
 
     <paper-icon-button
         icon="close"
@@ -239,7 +240,6 @@ element will get appended to the document's `<body>`.
        */
       _dialogToggled: function(opened) {
         if (!opened) {
-
           if (this.$.player) {
             this.$.player.pause();
           }
@@ -247,7 +247,12 @@ element will get appended to the document's `<body>`.
 
           if (this.$.player) {
             this.$.player.seekTo(0);
-            this.$.player.play();
+
+            if (this.$.player.playsupported) {
+              this.$.player.play();
+            } else {
+              this._showPlayer();
+            }
           }
         }
       },
@@ -264,13 +269,38 @@ element will get appended to the document's `<body>`.
       },
 
       /**
-       * Adds the `ready` class to the YouTube player when it fires the `ready`
-       * event.
+       * Shows or pauses and hides the player when it's ready.
+       *
+       * @private
+       */
+      _playerReady: function() {
+        if (this.opened) {
+          this._showPlayer();
+        } else {
+          this.$.player.pause();
+        }
+      },
+
+      /**
+       * Shows or pauses and hides the player when its state changes.
        *
        * @param  {Event} e The event object.
        * @private
        */
-      _playerReady: function(e) {
+      _playerStateChange: function(e) {
+        if (this.opened && e.detail.data === YT.PlayerState.PLAYING) {
+          this._showPlayer();
+        } else if (!this.opened) {
+          this.$.player.pause();
+        }
+      },
+
+      /**
+       * Hides the spinner and fades in the player.
+       *
+       * @private
+       */
+      _showPlayer: function() {
         this.async(function() {
           this._loading = false;
         }, 300);
